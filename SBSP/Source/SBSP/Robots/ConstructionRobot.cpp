@@ -4,6 +4,7 @@
 #include "ConstructionRobot.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "SBSP/HexGrid/HexGrid.h"
 #include "SBSP/HexGrid/HexTile.h"
 
 
@@ -48,7 +49,7 @@ void AConstructionRobot::PlaceTile()
 
 void AConstructionRobot::MoveToTarget(const float DeltaTime)
 {
-	if (!CanMove()) return;
+	if (!HarbourRef || !CanMove()) return;
 	
 	FVector NewTargetLocation = TargetLocation;
 	NewTargetLocation.Z = NewTargetLocation.Z+75;
@@ -60,7 +61,7 @@ void AConstructionRobot::MoveToTarget(const float DeltaTime)
 	SetActorLocation(NewLocation);
 	
 	if (RobotState == ERobotState::MovingTile &&
-		FVector::DistXY(GetActorLocation(), TargetLocation) < 5.f)
+		FVector::DistXY(GetActorLocation(), TargetLocation) <= HarbourRef->GetMeshRadius()+HarbourRef->GetTileSpacing())
 	{
 		UKismetSystemLibrary::PrintString(this, "Placing Tile");
 		PlaceTile();
@@ -75,7 +76,35 @@ void AConstructionRobot::MoveToTarget(const float DeltaTime)
 
 bool AConstructionRobot::CanMove()
 {
-	return true;
+	const FVector Start = GetActorLocation();
+	FVector End = Start;
+	End.Z = End.Z-100;
+
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+	
+	FHitResult HitResult;
+	GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility,
+		CollisionParams
+	);
+
+	//Debug Line.
+	DrawDebugLine(
+		GetWorld(),
+		Start,
+		End,
+		HitResult.bBlockingHit ? FColor::Green : FColor::Red,
+		false,
+		0.1f,
+		0,
+		5.0f
+	);
+	
+	return HitResult.bBlockingHit;
 }
 
 

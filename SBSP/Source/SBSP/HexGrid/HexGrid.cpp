@@ -117,6 +117,7 @@ void AHexGrid::SpawnRobots()
 		&Location
 		)))
 		{
+			SpawnedRobot->SetHarbour(this);
 			SpawnedRobot->SetHarbourLocation(Location);
 			SpawnedRobot->SetHexTileClass(HexTileClass);
 			ConstructionRobots.Add(SpawnedRobot);
