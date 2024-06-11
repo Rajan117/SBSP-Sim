@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ConstructionRobot.generated.h"
 
+class AHexGrid;
 class AHexTile;
 
 UENUM(BlueprintType)
@@ -43,6 +44,8 @@ protected:
 	virtual void PlaceTile();
 	
 private:
+	UPROPERTY()
+	AHexGrid* HarbourRef;
 	ERobotState RobotState = ERobotState::Free;
 	FVector HarbourLocation;
 	FVector TargetLocation;
@@ -54,5 +57,6 @@ public:
 	FORCEINLINE void SetHexTileClass(TSubclassOf<AHexTile> InHexTileClass) { HexTileClass = InHexTileClass; }
 	FORCEINLINE void SetHarbourLocation(const FVector& Location) { HarbourLocation = Location; }
 	FORCEINLINE void SetTargetLocation(const FVector& Location) { TargetLocation = Location; }
+	FORCEINLINE void SetHarbour(AHexGrid* InHarbourRef) { HarbourRef = InHarbourRef; }
 	FORCEINLINE ERobotState GetRobotState() const { return RobotState; }
 };

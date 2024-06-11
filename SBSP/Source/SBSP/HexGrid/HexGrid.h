@@ -20,6 +20,7 @@ public:
 	AHexGrid();
 
 	virtual void Tick(float DeltaSeconds) override;
+	float GetMeshRadius() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,7 +40,6 @@ protected:
 	int BigHexagonRadius = 2; //Radius in number of tiles
 
 	float LongRadius;
-	float GetMeshRadius() const;
 	
 	//Robots
 	void SpawnRobots();
@@ -58,6 +58,9 @@ private:
 	AConstructionRobot* ConstructionRobot;
 	
 	static bool IsRobotFree(const AConstructionRobot* Robot);
+
+public:
+	FORCEINLINE float GetTileSpacing() const { return TileSpacing; }
 	
 };
 
