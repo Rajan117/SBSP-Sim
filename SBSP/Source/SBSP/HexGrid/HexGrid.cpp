@@ -20,16 +20,16 @@ void AHexGrid::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	ConstructTiles();
+	//ConstructTiles();
 }
 
 void AHexGrid::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	SpawnRobots();
+	CurrentTileStock = InitialTileStock;
 	LongRadius = GetMeshRadius();
 	GenerateTileLocations();
+	SpawnRobots();
 }
 
 void AHexGrid::ConstructTiles()
@@ -42,11 +42,13 @@ void AHexGrid::ConstructTiles()
 	{
 		if (Robot &&
 		Robot->GetRobotState() == ERobotState::Free
-		&& !TileLocations.IsEmpty())
+		&& !TileLocations.IsEmpty()
+		&& CurrentTileStock > 0)
 		{
 			FVector Location;
 			TileLocations.Dequeue(Location);
 			Robot->PlaceTileAtLocation(Location);
+			CurrentTileStock--;
 		}
 	}
 }
@@ -101,6 +103,17 @@ float AHexGrid::GetMeshRadius() const
 	return TileScale*MaxX;
 }
 
+bool AHexGrid::GetNextTile(FVector& InLocation)
+{
+	if (CurrentTileStock > 0 && !TileLocations.IsEmpty())
+	{
+		TileLocations.Dequeue(InLocation);
+		CurrentTileStock--;
+		return true;
+	}
+	return false;
+}
+
 #pragma endregion 
 
 #pragma region Robots
@@ -108,7 +121,8 @@ float AHexGrid::GetMeshRadius() const
 void AHexGrid::SpawnRobots()
 {
 	if (!ConstructionRobotClass || !HexTileMesh) return;
-	const FVector Location = GetActorLocation()+(HexTileMesh->GetBoundingBox().Max.Z*TileScale);
+	FVector Location = GetActorLocation();
+	Location.Z += (HexTileMesh->GetBoundingBox().Max.Z*TileScale);
 
 	for (int i = 0; i < NumberOfRobots; i++)
 	{
@@ -117,11 +131,8 @@ void AHexGrid::SpawnRobots()
 		&Location
 		)))
 		{
-			SpawnedRobot->SetHarbour(this);
-			SpawnedRobot->SetHarbourLocation(Location);
-			SpawnedRobot->SetHexTileClass(HexTileClass);
+			SpawnedRobot->SpawnInit(this);
 			ConstructionRobots.Add(SpawnedRobot);
-			ConstructionRobot = SpawnedRobot;
 		}
 	}
 }

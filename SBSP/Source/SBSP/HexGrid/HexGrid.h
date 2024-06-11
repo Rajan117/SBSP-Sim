@@ -21,6 +21,7 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 	float GetMeshRadius() const;
+	bool GetNextTile(FVector& InLocation);
 
 protected:
 	virtual void BeginPlay() override;
@@ -37,7 +38,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float TileSpacing = 0.f; //Space between tiles
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int BigHexagonRadius = 2; //Radius in number of tiles
+	int32 BigHexagonRadius = 2; //Radius in number of tiles
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 InitialTileStock = 20; //Initial number of tile harbour has
 
 	float LongRadius;
 	
@@ -50,6 +53,7 @@ protected:
 	
 	
 private:
+	int32 CurrentTileStock = 0;
 	TArray<AHexTile*> HexTiles;
 	TQueue<FVector> TileLocations;
 	UPROPERTY()
@@ -58,9 +62,12 @@ private:
 	AConstructionRobot* ConstructionRobot;
 	
 	static bool IsRobotFree(const AConstructionRobot* Robot);
+	
 
 public:
+	FORCEINLINE TSubclassOf<AHexTile> GetTileClass() const { return HexTileClass; }
 	FORCEINLINE float GetTileSpacing() const { return TileSpacing; }
+	FORCEINLINE float GetTileHeight() const { return HexTileMesh->GetBoundingBox().Max.Z*TileScale; }
 	
 };
 

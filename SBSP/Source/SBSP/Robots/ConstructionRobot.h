@@ -29,6 +29,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void SpawnInit(AHexGrid* SpawningHarbour);
 	virtual void PlaceTileAtLocation(const FVector& Location);
 	
 protected:
@@ -42,6 +43,7 @@ protected:
 	TSubclassOf<AHexTile> HexTileClass;
 
 	virtual void PlaceTile();
+	void RequestTile();
 	
 private:
 	UPROPERTY()

@@ -11,12 +11,22 @@
 AConstructionRobot::AConstructionRobot()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	RobotState = ERobotState::Free;
 }
 
 void AConstructionRobot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MoveToTarget(DeltaTime);
+}
+
+void AConstructionRobot::SpawnInit(AHexGrid* SpawningHarbour)
+{
+	HarbourRef = SpawningHarbour;
+	HarbourLocation = HarbourRef->GetActorLocation();
+	HarbourLocation.Z += HarbourRef->GetTileHeight();
+	HexTileClass = HarbourRef->GetTileClass();
+	RequestTile();
 }
 
 void AConstructionRobot::BeginPlay()
@@ -29,7 +39,6 @@ void AConstructionRobot::PlaceTileAtLocation(const FVector& Location)
 	if (RobotState != ERobotState::Free) return;
 	RobotState = ERobotState::MovingTile;
 	TargetLocation = Location;
-	UKismetSystemLibrary::PrintString(this, TargetLocation.ToString());
 }
 
 void AConstructionRobot::PlaceTile()
@@ -43,13 +52,25 @@ void AConstructionRobot::PlaceTile()
 	{
 		RobotState = ERobotState::ReturningHome;
 		TargetLocation = HarbourLocation;
-		UKismetSystemLibrary::PrintString(this, "Placed Tile");
+	}
+}
+
+void AConstructionRobot::RequestTile()
+{
+	if (!HarbourRef) return;
+
+	FVector NewLocation = FVector::ZeroVector;
+	if (HarbourRef->GetNextTile(NewLocation))
+	{
+		RobotState = ERobotState::MovingTile;
+		TargetLocation = NewLocation;
 	}
 }
 
 void AConstructionRobot::MoveToTarget(const float DeltaTime)
 {
 	if (!HarbourRef || !CanMove()) return;
+	if (RobotState == ERobotState::Free) return;
 	
 	FVector NewTargetLocation = TargetLocation;
 	NewTargetLocation.Z = NewTargetLocation.Z+75;
@@ -63,14 +84,13 @@ void AConstructionRobot::MoveToTarget(const float DeltaTime)
 	if (RobotState == ERobotState::MovingTile &&
 		FVector::DistXY(GetActorLocation(), TargetLocation) <= HarbourRef->GetMeshRadius()+HarbourRef->GetTileSpacing())
 	{
-		UKismetSystemLibrary::PrintString(this, "Placing Tile");
 		PlaceTile();
 	}
 	else if (RobotState == ERobotState::ReturningHome &&
-		FVector::DistXY(GetActorLocation(), HarbourLocation) < 5.f)
+		FVector::DistXY(GetActorLocation(), HarbourLocation) <= HarbourRef->GetMeshRadius()+HarbourRef->GetTileSpacing())
 	{
-		UKismetSystemLibrary::PrintString(this, "Returned Home");
 		RobotState = ERobotState::Free;
+		RequestTile();
 	}
 }
 
