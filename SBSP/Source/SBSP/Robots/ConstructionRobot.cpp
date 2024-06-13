@@ -74,7 +74,7 @@ void AConstructionRobot::MoveToTarget(const float DeltaTime)
 	
 	FVector NewTargetLocation = TargetLocation;
 	NewTargetLocation.Z = NewTargetLocation.Z+75;
-	const FVector NewLocation = FMath::VInterpTo(
+	const FVector NewLocation = FMath::VInterpTo(     
 		GetActorLocation(),
 		NewTargetLocation,
 		DeltaTime,

@@ -30,6 +30,14 @@ void AHexGrid::BeginPlay()
 	LongRadius = GetMeshRadius();
 	GenerateTileLocations();
 	SpawnRobots();
+	InitiateRestockingTimer();
+}
+
+void AHexGrid::Restock()
+{
+	UKismetSystemLibrary::PrintString(this, "Restocked");
+	CurrentTileStock += RestockAmount;
+	ConstructTiles();
 }
 
 void AHexGrid::ConstructTiles()
@@ -135,6 +143,17 @@ void AHexGrid::SpawnRobots()
 			ConstructionRobots.Add(SpawnedRobot);
 		}
 	}
+}
+
+void AHexGrid::InitiateRestockingTimer()
+{
+	GetWorld()->GetTimerManager().SetTimer(
+		RestockTimerHandle,
+		this,
+		&AHexGrid::Restock,
+		RestockFrequency,
+		true
+	);
 }
 
 bool AHexGrid::IsRobotFree(const AConstructionRobot* Robot)
