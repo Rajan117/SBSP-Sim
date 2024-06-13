@@ -56,7 +56,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	int32 RestockAmount = 10;
 	UPROPERTY(EditDefaultsOnly)
-	float RestockFrequency = 20; //Number of seconds between restocks
+	float RestockFrequency = 10; //Number of seconds between restocks
 	
 	
 private:

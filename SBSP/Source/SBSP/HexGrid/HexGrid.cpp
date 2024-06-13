@@ -48,16 +48,7 @@ void AHexGrid::ConstructTiles()
 
 	for (AConstructionRobot* Robot : FreeRobots)
 	{
-		if (Robot &&
-		Robot->GetRobotState() == ERobotState::Free
-		&& !TileLocations.IsEmpty()
-		&& CurrentTileStock > 0)
-		{
-			FVector Location;
-			TileLocations.Dequeue(Location);
-			Robot->PlaceTileAtLocation(Location);
-			CurrentTileStock--;
-		}
+		Robot->RequestTile();
 	}
 }
 

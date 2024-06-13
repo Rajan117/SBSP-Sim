@@ -3,6 +3,7 @@
 
 #include "ConstructionRobot.h"
 
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "SBSP/HexGrid/HexGrid.h"
 #include "SBSP/HexGrid/HexTile.h"
@@ -10,6 +11,12 @@
 
 AConstructionRobot::AConstructionRobot()
 {
+	SceneRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRootComponent"));
+	RootComponent = SceneRootComponent;
+	
+	RobotMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Robot Mesh"));
+	RobotMesh->SetupAttachment(RootComponent);
+	
 	PrimaryActorTick.bCanEverTick = true;
 	RobotState = ERobotState::Free;
 }
@@ -50,6 +57,7 @@ void AConstructionRobot::PlaceTile()
 		&TargetLocation
 	)))
 	{
+		DespawnTile();
 		RobotState = ERobotState::ReturningHome;
 		TargetLocation = HarbourLocation;
 	}
@@ -57,11 +65,12 @@ void AConstructionRobot::PlaceTile()
 
 void AConstructionRobot::RequestTile()
 {
-	if (!HarbourRef) return;
+	if (!HarbourRef || RobotState != ERobotState::Free) return;
 
 	FVector NewLocation = FVector::ZeroVector;
 	if (HarbourRef->GetNextTile(NewLocation))
 	{
+		SpawnTile();
 		RobotState = ERobotState::MovingTile;
 		TargetLocation = NewLocation;
 	}
@@ -80,6 +89,7 @@ void AConstructionRobot::MoveToTarget(const float DeltaTime)
 		DeltaTime,
 		RobotSpeed);
 	SetActorLocation(NewLocation);
+	PointToLocation(TargetLocation);
 	
 	if (RobotState == ERobotState::MovingTile &&
 		FVector::DistXY(GetActorLocation(), TargetLocation) <= HarbourRef->GetMeshRadius()+HarbourRef->GetTileSpacing())
@@ -125,6 +135,39 @@ bool AConstructionRobot::CanMove()
 	);
 	
 	return HitResult.bBlockingHit;
+}
+
+void AConstructionRobot::PointToLocation(const FVector& Location)
+{
+	const FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation);
+	const FRotator CurrentRotation = GetActorRotation();
+	const FRotator NewRotation(CurrentRotation.Pitch, TargetRotation.Yaw, CurrentRotation.Roll);	
+	SetActorRotation(NewRotation);
+}
+
+void AConstructionRobot::SpawnTile()
+{
+	if (HexTileRef || !HexTileClass || !HarbourRef || !RobotMesh) return;
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	const FVector SpawnLocation = RobotMesh->GetSocketLocation(FName("TileSocket"));
+	const FRotator SpawnRotation = GetActorRotation();
+
+	HexTileRef = GetWorld()->SpawnActor<AHexTile>(HexTileClass, SpawnLocation, SpawnRotation, SpawnParams);
+	if (HexTileRef)
+	{
+		HexTileRef->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	}
+}
+
+void AConstructionRobot::DespawnTile()
+{
+	if (HexTileRef)
+	{
+		HexTileRef->Destroy();
+		HexTileRef = nullptr;
+	}
 }
 
 
