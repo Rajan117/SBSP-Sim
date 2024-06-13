@@ -27,6 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	//Hex Tiles
+	void Restock();
 	virtual void ConstructTiles();
 	virtual void GenerateTileLocations();
 	UPROPERTY(EditDefaultsOnly)
@@ -40,7 +41,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 BigHexagonRadius = 2; //Radius in number of tiles
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 InitialTileStock = 20; //Initial number of tile harbour has
+	int32 InitialTileStock = 20; //Initial number of tiles harbour has
 
 	float LongRadius;
 	
@@ -50,6 +51,12 @@ protected:
 	TSubclassOf<AConstructionRobot> ConstructionRobotClass;
 	UPROPERTY(EditDefaultsOnly)
 	int32 NumberOfRobots = 1;
+
+	//Restocking
+	UPROPERTY(EditDefaultsOnly)
+	int32 RestockAmount = 10;
+	UPROPERTY(EditDefaultsOnly)
+	float RestockFrequency = 20; //Number of seconds between restocks
 	
 	
 private:
@@ -60,6 +67,9 @@ private:
 	TArray<AConstructionRobot*> ConstructionRobots;
 	UPROPERTY()
 	AConstructionRobot* ConstructionRobot;
+
+	void InitiateRestockingTimer();
+	FTimerHandle RestockTimerHandle;
 	
 	static bool IsRobotFree(const AConstructionRobot* Robot);
 	
