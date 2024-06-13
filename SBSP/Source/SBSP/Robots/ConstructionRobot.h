@@ -31,28 +31,41 @@ public:
 
 	void SpawnInit(AHexGrid* SpawningHarbour);
 	virtual void PlaceTileAtLocation(const FVector& Location);
+	void RequestTile();
 	
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* SceneRootComponent;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UStaticMesh* RobotMesh;
+	UStaticMeshComponent* RobotMesh;
 	UPROPERTY(EditDefaultsOnly)
 	float RobotSpeed = 1.f;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHexTile> HexTileClass;
 
 	virtual void PlaceTile();
-	void RequestTile();
 	
 private:
+	//Harbour
 	UPROPERTY()
 	AHexGrid* HarbourRef;
-	ERobotState RobotState = ERobotState::Free;
 	FVector HarbourLocation;
+
+	//Movement
+	ERobotState RobotState = ERobotState::Free;
 	FVector TargetLocation;
 	void MoveToTarget(float DeltaTime);
 	bool CanMove();
+	void PointToLocation(const FVector& Location);
+
+	//Tile
+	UPROPERTY()
+	AHexTile* HexTileRef;
+	void SpawnTile();
+	void DespawnTile();
 
 public:
 	FORCEINLINE void SetHexTileClass(TSubclassOf<AHexTile> InHexTileClass) { HexTileClass = InHexTileClass; }
