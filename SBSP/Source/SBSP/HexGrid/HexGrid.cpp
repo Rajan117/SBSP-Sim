@@ -14,13 +14,13 @@
 AHexGrid::AHexGrid()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	SceneRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRootComponent"));
+	RootComponent = SceneRootComponent;
 }
 
 void AHexGrid::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	//ConstructTiles();
 }
 
 void AHexGrid::BeginPlay()
@@ -37,7 +37,7 @@ void AHexGrid::Restock()
 {
 	UKismetSystemLibrary::PrintString(this, "Restocked");
 	CurrentTileStock += RestockAmount;
-	ConstructTiles();
+	OnHarbourRestockedDelegate.Broadcast();
 }
 
 void AHexGrid::ConstructTiles()

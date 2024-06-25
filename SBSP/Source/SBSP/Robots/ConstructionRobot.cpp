@@ -29,10 +29,13 @@ void AConstructionRobot::Tick(float DeltaTime)
 
 void AConstructionRobot::SpawnInit(AHexGrid* SpawningHarbour)
 {
+	if (!SpawningHarbour) return;
+	
 	HarbourRef = SpawningHarbour;
 	HarbourLocation = HarbourRef->GetActorLocation();
 	HarbourLocation.Z += HarbourRef->GetTileHeight();
 	HexTileClass = HarbourRef->GetTileClass();
+	HarbourRef->OnHarbourRestockedDelegate.AddDynamic(this, &AConstructionRobot::OnHarbourRestocked);
 	RequestTile();
 }
 
@@ -61,6 +64,12 @@ void AConstructionRobot::PlaceTile()
 		RobotState = ERobotState::ReturningHome;
 		TargetLocation = HarbourLocation;
 	}
+}
+
+void AConstructionRobot::OnHarbourRestocked()
+{
+	if (!HarbourRef || RobotState != ERobotState::Free) return;
+	RequestTile();
 }
 
 void AConstructionRobot::RequestTile()
