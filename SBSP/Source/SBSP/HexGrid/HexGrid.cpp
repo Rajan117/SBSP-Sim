@@ -37,8 +37,28 @@ void AHexGrid::BeginPlay()
 void AHexGrid::Restock()
 {
 	UKismetSystemLibrary::PrintString(this, "Restocked");
+	AddTiles(RestockAmount);
 	CurrentTileStock += RestockAmount;
 	OnHarbourRestockedDelegate.Broadcast();
+}
+
+void AHexGrid::AddTiles(int32 NewStock)
+{
+	if (!HexTileClass || !HexTileMesh) return;
+	FVector SpawnLocation = GetActorLocation();
+	SpawnLocation.Z += 50;
+	
+	for (int i = CurrentTileStock; i <= CurrentTileStock+NewStock; i++)
+	{
+		SpawnLocation.Z += 5.f*i;
+		if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
+			HexTileClass,
+			&SpawnLocation
+		)))
+		{
+			HexTiles.Add(SpawnedTile);
+		}
+	}
 }
 
 void AHexGrid::ConstructTiles()
