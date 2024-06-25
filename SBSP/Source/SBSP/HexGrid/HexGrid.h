@@ -33,6 +33,7 @@ protected:
 	//Hex Tiles
 	void Restock();
 	virtual void ConstructTiles();
+	void AddTiles(int32 NewStock);
 	virtual void GenerateTileLocations();
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHexTile> HexTileClass;

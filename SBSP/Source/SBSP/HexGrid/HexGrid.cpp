@@ -31,6 +31,7 @@ void AHexGrid::BeginPlay()
 	GenerateTileLocations();
 	SpawnRobots();
 	InitiateRestockingTimer();
+	ConstructTiles();
 }
 
 void AHexGrid::Restock()
@@ -42,13 +43,20 @@ void AHexGrid::Restock()
 
 void AHexGrid::ConstructTiles()
 {
-	if (TileLocations.IsEmpty()) return;
+	if (!HexTileClass || !HexTileMesh) return;
+	FVector SpawnLocation = GetActorLocation();
+	SpawnLocation.Z += 50;
 	
-	TArray<AConstructionRobot*> FreeRobots = ConstructionRobots.FilterByPredicate(IsRobotFree);
-
-	for (AConstructionRobot* Robot : FreeRobots)
+	for (int i = 1; i <= CurrentTileStock; i++)
 	{
-		Robot->RequestTile();
+		SpawnLocation.Z += 5.f*i;
+		if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
+			HexTileClass,
+			&SpawnLocation
+		)))
+		{
+			HexTiles.Add(SpawnedTile);
+		}
 	}
 }
 
@@ -108,6 +116,10 @@ bool AHexGrid::GetNextTile(FVector& InLocation)
 	{
 		TileLocations.Dequeue(InLocation);
 		CurrentTileStock--;
+		if (!HexTiles.IsEmpty())
+		{
+			if (AHexTile* HexTile = HexTiles.Pop()) HexTile->Destroy();
+		}
 		return true;
 	}
 	return false;

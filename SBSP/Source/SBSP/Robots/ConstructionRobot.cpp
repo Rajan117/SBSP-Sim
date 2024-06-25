@@ -117,7 +117,7 @@ bool AConstructionRobot::CanMove()
 {
 	const FVector Start = GetActorLocation();
 	FVector End = Start;
-	End.Z = End.Z-100;
+	End.Z = End.Z-200;
 
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
