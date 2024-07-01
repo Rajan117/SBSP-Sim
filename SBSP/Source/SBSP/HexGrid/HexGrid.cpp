@@ -9,6 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "SBSP/HexGrid/HexTile.h"
 #include "SBSP/Robots/ConstructionRobot.h"
+#include "SBSP/Rockets/Rocket.h"
 
 
 AHexGrid::AHexGrid()
@@ -34,11 +35,11 @@ void AHexGrid::BeginPlay()
 	ConstructTiles();
 }
 
-void AHexGrid::Restock()
+void AHexGrid::Restock(int32 AddedStock)
 {
 	UKismetSystemLibrary::PrintString(this, "Restocked");
-	AddTiles(RestockAmount);
-	CurrentTileStock += RestockAmount;
+	CurrentTileStock += AddedStock;
+	AddTiles(AddedStock);
 	OnHarbourRestockedDelegate.Broadcast();
 }
 
@@ -50,7 +51,7 @@ void AHexGrid::AddTiles(int32 NewStock)
 	
 	for (int i = CurrentTileStock; i <= CurrentTileStock+NewStock; i++)
 	{
-		SpawnLocation.Z += 5.f*i;
+		SpawnLocation.Z += 1*i;
 		if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
 			HexTileClass,
 			&SpawnLocation
@@ -170,13 +171,15 @@ void AHexGrid::SpawnRobots()
 
 void AHexGrid::InitiateRestockingTimer()
 {
-	GetWorld()->GetTimerManager().SetTimer(
-		RestockTimerHandle,
-		this,
-		&AHexGrid::Restock,
-		RestockFrequency,
-		true
-	);
+	FVector Location = GetActorLocation();
+	if (ARocket* SpawnedRocket = Cast<ARocket>(GetWorld()->SpawnActor(
+	RocketClass,
+	&Location
+	)))
+	{
+		SpawnedRocket->SpawnInit(this, Location);
+		RocketRef = SpawnedRocket;
+	}
 }
 
 bool AHexGrid::IsRobotFree(const AConstructionRobot* Robot)
