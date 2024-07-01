@@ -65,11 +65,11 @@ void AHexGrid::ConstructTiles()
 {
 	if (!HexTileClass || !HexTileMesh) return;
 	FVector SpawnLocation = GetActorLocation();
-	SpawnLocation.Z += 50;
+	SpawnLocation.Z += 100;
 	
 	for (int i = 1; i <= CurrentTileStock; i++)
 	{
-		SpawnLocation.Z += 5.f*i;
+		SpawnLocation.Z += 1*i;
 		if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
 			HexTileClass,
 			&SpawnLocation
