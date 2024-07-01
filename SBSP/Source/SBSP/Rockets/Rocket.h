@@ -18,21 +18,37 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void Launch();
 	void SpawnInit(AHexGrid* Harbour,
-		const FVector& InStartLocation,
 		const FVector& InTargetLocation);
 
 protected:
-	void Launch();
 	void Dock();
+
+	UPROPERTY(EditDefaultsOnly)
+	float RocketSpeed = 1.f;
+
+	//Payload
+	UPROPERTY(EditDefaultsOnly, Category = Payload)
+	int32 NumRobots = 0;
+	UPROPERTY(EditDefaultsOnly, Category = Payload)
+	int32 NumTiles = 20;
 
 private:
 	FVector StartLocation;
 	FVector TargetLocation;
 	void MoveToTarget(float DeltaTime);
+	bool bCanMove = false;
 
+	FTimerHandle DockingTimerHandle;
+	float DockingDelay = 5.f;
 	FTimerHandle RestockTimerHandle;
+	float LaunchFrequency = 10.f;
+	UFUNCTION()
 	void Restart();
+	int32 NumLaunches = 0;
+
 
 	UPROPERTY()
 	AHexGrid* HarbourRef;
