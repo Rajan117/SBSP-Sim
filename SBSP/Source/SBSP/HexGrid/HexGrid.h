@@ -8,6 +8,7 @@
 #include "Containers/Queue.h"
 #include "HexGrid.generated.h"
 
+class ARocket;
 class AHexTile;
 class AConstructionRobot;
 
@@ -24,6 +25,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	float GetMeshRadius() const;
 	bool GetNextTile(FVector& InLocation);
+	void Restock(int32 AddedStock);
 
 	FOnHarbourRestocked OnHarbourRestockedDelegate;
 
@@ -62,6 +64,8 @@ protected:
 	int32 RestockAmount = 10;
 	UPROPERTY(EditDefaultsOnly)
 	float RestockFrequency = 10; //Number of seconds between restocks
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ARocket> RocketClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* SceneRootComponent;
@@ -77,9 +81,11 @@ private:
 
 	void InitiateRestockingTimer();
 	FTimerHandle RestockTimerHandle;
+	UPROPERTY()
+	ARocket* RocketRef;
 	
 	static bool IsRobotFree(const AConstructionRobot* Robot);
-	
+
 
 public:
 	FORCEINLINE TSubclassOf<AHexTile> GetTileClass() const { return HexTileClass; }
