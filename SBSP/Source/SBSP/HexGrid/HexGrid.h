@@ -11,6 +11,8 @@
 class AHexTile;
 class AConstructionRobot;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHarbourRestocked);
+
 UCLASS()
 class SBSP_API AHexGrid : public AActor
 {
@@ -23,11 +25,14 @@ public:
 	float GetMeshRadius() const;
 	bool GetNextTile(FVector& InLocation);
 
+	FOnHarbourRestocked OnHarbourRestockedDelegate;
+
 protected:
 	virtual void BeginPlay() override;
 
 	//Hex Tiles
 	void Restock();
+	void AddTiles(int32 NewStock);
 	virtual void ConstructTiles();
 	virtual void GenerateTileLocations();
 	UPROPERTY(EditDefaultsOnly)
@@ -57,7 +62,9 @@ protected:
 	int32 RestockAmount = 10;
 	UPROPERTY(EditDefaultsOnly)
 	float RestockFrequency = 10; //Number of seconds between restocks
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* SceneRootComponent;
 	
 private:
 	int32 CurrentTileStock = 0;

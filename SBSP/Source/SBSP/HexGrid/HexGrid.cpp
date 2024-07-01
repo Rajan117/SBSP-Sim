@@ -14,13 +14,13 @@
 AHexGrid::AHexGrid()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	SceneRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRootComponent"));
+	RootComponent = SceneRootComponent;
 }
 
 void AHexGrid::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	//ConstructTiles();
 }
 
 void AHexGrid::BeginPlay()
@@ -31,24 +31,52 @@ void AHexGrid::BeginPlay()
 	GenerateTileLocations();
 	SpawnRobots();
 	InitiateRestockingTimer();
+	ConstructTiles();
 }
 
 void AHexGrid::Restock()
 {
 	UKismetSystemLibrary::PrintString(this, "Restocked");
+	AddTiles(RestockAmount);
 	CurrentTileStock += RestockAmount;
-	ConstructTiles();
+	OnHarbourRestockedDelegate.Broadcast();
+}
+
+void AHexGrid::AddTiles(int32 NewStock)
+{
+	if (!HexTileClass || !HexTileMesh) return;
+	FVector SpawnLocation = GetActorLocation();
+	SpawnLocation.Z += 50;
+	
+	for (int i = CurrentTileStock; i <= CurrentTileStock+NewStock; i++)
+	{
+		SpawnLocation.Z += 5.f*i;
+		if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
+			HexTileClass,
+			&SpawnLocation
+		)))
+		{
+			HexTiles.Add(SpawnedTile);
+		}
+	}
 }
 
 void AHexGrid::ConstructTiles()
 {
-	if (TileLocations.IsEmpty()) return;
+	if (!HexTileClass || !HexTileMesh) return;
+	FVector SpawnLocation = GetActorLocation();
+	SpawnLocation.Z += 100;
 	
-	TArray<AConstructionRobot*> FreeRobots = ConstructionRobots.FilterByPredicate(IsRobotFree);
-
-	for (AConstructionRobot* Robot : FreeRobots)
+	for (int i = 1; i <= CurrentTileStock; i++)
 	{
-		Robot->RequestTile();
+		SpawnLocation.Z += 1*i;
+		if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
+			HexTileClass,
+			&SpawnLocation
+		)))
+		{
+			HexTiles.Add(SpawnedTile);
+		}
 	}
 }
 
@@ -108,6 +136,10 @@ bool AHexGrid::GetNextTile(FVector& InLocation)
 	{
 		TileLocations.Dequeue(InLocation);
 		CurrentTileStock--;
+		if (!HexTiles.IsEmpty())
+		{
+			if (AHexTile* HexTile = HexTiles.Pop()) HexTile->Destroy();
+		}
 		return true;
 	}
 	return false;

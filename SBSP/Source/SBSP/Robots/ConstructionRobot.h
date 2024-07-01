@@ -47,6 +47,8 @@ protected:
 	TSubclassOf<AHexTile> HexTileClass;
 
 	virtual void PlaceTile();
+	UFUNCTION()
+	void OnHarbourRestocked();
 	
 private:
 	//Harbour
