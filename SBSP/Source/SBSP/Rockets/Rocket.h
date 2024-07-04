@@ -44,7 +44,7 @@ private:
 	FTimerHandle DockingTimerHandle;
 	float DockingDelay = 5.f;
 	FTimerHandle RestockTimerHandle;
-	float LaunchFrequency = 10.f;
+	float LaunchFrequency = 15.f;
 	UFUNCTION()
 	void Restart();
 	int32 NumLaunches = 0;

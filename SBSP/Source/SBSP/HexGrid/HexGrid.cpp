@@ -24,15 +24,21 @@ void AHexGrid::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
+void AHexGrid::SpawnInit(ASpaceStructure* InSpaceStructure, int32 HarbourTileRadius)
+{
+	SpaceStructure = InSpaceStructure;
+	BigHexagonRadius = HarbourTileRadius;
+	GenerateTileLocations();
+	ConstructTiles();
+	InitiateRestockingTimer();
+}
+
 void AHexGrid::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentTileStock = InitialTileStock;
 	LongRadius = GetMeshRadius();
-	GenerateTileLocations();
 	SpawnRobots();
-	InitiateRestockingTimer();
-	ConstructTiles();
 }
 
 void AHexGrid::Restock(int32 AddedStock)
@@ -45,7 +51,7 @@ void AHexGrid::Restock(int32 AddedStock)
 
 void AHexGrid::AddTiles(int32 NewStock)
 {
-	if (!HexTileClass || !HexTileMesh) return;
+	if (!HexTileClass) return;
 	FVector SpawnLocation = GetActorLocation();
 	SpawnLocation.Z += 50;
 	
@@ -64,7 +70,7 @@ void AHexGrid::AddTiles(int32 NewStock)
 
 void AHexGrid::ConstructTiles()
 {
-	if (!HexTileClass || !HexTileMesh) return;
+	if (!HexTileClass) return;
 	FVector SpawnLocation = GetActorLocation();
 	SpawnLocation.Z += 100;
 	
@@ -152,7 +158,7 @@ bool AHexGrid::GetNextTile(FVector& InLocation)
 
 void AHexGrid::SpawnRobots()
 {
-	if (!ConstructionRobotClass || !HexTileMesh) return;
+	if (!ConstructionRobotClass) return;
 	FVector Location = GetActorLocation();
 	Location.Z += (HexTileMesh->GetBoundingBox().Max.Z*TileScale);
 

@@ -8,6 +8,7 @@
 #include "Containers/Queue.h"
 #include "HexGrid.generated.h"
 
+class ASpaceStructure;
 class ARocket;
 class AHexTile;
 class AConstructionRobot;
@@ -21,19 +22,19 @@ class SBSP_API AHexGrid : public AActor
 
 public:
 	AHexGrid();
-
 	virtual void Tick(float DeltaSeconds) override;
+
+	void SpawnInit(ASpaceStructure* InSpaceStructure, int32 HarbourTileRadius);
 	float GetMeshRadius() const;
 	bool GetNextTile(FVector& InLocation);
 	void Restock(int32 AddedStock);
-
+	static bool IsRobotFree(const AConstructionRobot* Robot);
 	FOnHarbourRestocked OnHarbourRestockedDelegate;
 
 protected:
 	virtual void BeginPlay() override;
 
 	//Hex Tiles
-	void Restock();
 	void AddTiles(int32 NewStock);
 	virtual void ConstructTiles();
 	virtual void GenerateTileLocations();
@@ -49,7 +50,6 @@ protected:
 	int32 BigHexagonRadius = 2; //Radius in number of tiles
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 InitialTileStock = 20; //Initial number of tiles harbour has
-
 	float LongRadius;
 	
 	//Robots
@@ -77,20 +77,17 @@ private:
 	UPROPERTY()
 	TArray<AConstructionRobot*> ConstructionRobots;
 	UPROPERTY()
-	AConstructionRobot* ConstructionRobot;
-
+	ASpaceStructure* SpaceStructure;
+	
 	void InitiateRestockingTimer();
 	FTimerHandle RestockTimerHandle;
 	UPROPERTY()
 	ARocket* RocketRef;
 	
-	static bool IsRobotFree(const AConstructionRobot* Robot);
-
-
 public:
 	FORCEINLINE TSubclassOf<AHexTile> GetTileClass() const { return HexTileClass; }
 	FORCEINLINE float GetTileSpacing() const { return TileSpacing; }
 	FORCEINLINE float GetTileHeight() const { return HexTileMesh->GetBoundingBox().Max.Z*TileScale; }
-	
+	FORCEINLINE void SetSpaceStructure(ASpaceStructure* InSpaceStructure) { SpaceStructure = InSpaceStructure; }
 };
 

@@ -13,9 +13,4 @@ class SBSP_API AHexTile : public AActor
 
 public:
 	AHexTile();
-	
-protected:
-
-private:
-	
 };
