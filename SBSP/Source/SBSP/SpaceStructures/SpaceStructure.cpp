@@ -19,7 +19,7 @@ void ASpaceStructure::Tick(float DeltaTime)
 void ASpaceStructure::BeginPlay()
 {
 	Super::BeginPlay();
-	LongRadius = GetMeshRadius()*HarbourTileRadius;
+	LongRadius = (GetMeshRadius()+10)*(HarbourTileRadius*2+1);
 	GenerateHarbourLocations();
 }
 
