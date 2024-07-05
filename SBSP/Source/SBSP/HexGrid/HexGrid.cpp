@@ -43,6 +43,11 @@ void AHexGrid::BeginPlay()
 
 void AHexGrid::Restock(int32 AddedStock)
 {
+	if (CurrentTileStock >= RequiredTiles || TileLocations.IsEmpty())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RestockTimerHandle);
+		return;
+	}
 	UKismetSystemLibrary::PrintString(this, "Restocked");
 	CurrentTileStock += AddedStock;
 	AddTiles(AddedStock);
@@ -115,12 +120,14 @@ void AHexGrid::GenerateTileLocations()
 			{
 				const FVector Location = FVector(CurrentPoint.X, CurrentPoint.Y, CurrentPoint.Z);
 				TileLocations.Enqueue(Location);
+				RequiredTiles++;
 				CurrentPoint += (SpawnScheme[j]*HexSide);
 			}
 			if (j==4)
 			{
 				const FVector Location = FVector(CurrentPoint.X, CurrentPoint.Y, CurrentPoint.Z);
 				TileLocations.Enqueue(Location);
+				RequiredTiles++;
 				CurrentPoint += (SpawnScheme[j]*HexSide);
 				hn++;
 				if (mult==BigHexagonRadius) break;

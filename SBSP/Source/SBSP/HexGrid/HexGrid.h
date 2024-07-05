@@ -74,6 +74,7 @@ private:
 	int32 CurrentTileStock = 0;
 	TArray<AHexTile*> HexTiles;
 	TQueue<FVector> TileLocations;
+	int32 RequiredTiles = 0;
 	UPROPERTY()
 	TArray<AConstructionRobot*> ConstructionRobots;
 	UPROPERTY()
