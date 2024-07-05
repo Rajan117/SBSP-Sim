@@ -31,6 +31,7 @@ void AHexGrid::SpawnInit(ASpaceStructure* InSpaceStructure, int32 HarbourTileRad
 	GenerateTileLocations();
 	ConstructTiles();
 	InitiateRestockingTimer();
+	SpawnRobots();
 }
 
 void AHexGrid::BeginPlay()
@@ -38,17 +39,11 @@ void AHexGrid::BeginPlay()
 	Super::BeginPlay();
 	CurrentTileStock = InitialTileStock;
 	LongRadius = GetMeshRadius();
-	SpawnRobots();
 }
 
 void AHexGrid::Restock(int32 AddedStock)
 {
-	if (CurrentTileStock >= RequiredTiles || TileLocations.IsEmpty())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(RestockTimerHandle);
-		return;
-	}
-	UKismetSystemLibrary::PrintString(this, "Restocked");
+	if (!GetShouldRestock()) return;
 	CurrentTileStock += AddedStock;
 	AddTiles(AddedStock);
 	OnHarbourRestockedDelegate.Broadcast();
@@ -195,6 +190,8 @@ void AHexGrid::InitiateRestockingTimer()
 	}
 }
 
+
+
 bool AHexGrid::IsRobotFree(const AConstructionRobot* Robot)
 {
 	return Robot->GetRobotState() == ERobotState::Free;
@@ -202,3 +199,12 @@ bool AHexGrid::IsRobotFree(const AConstructionRobot* Robot)
 }
 
 #pragma endregion 
+
+bool AHexGrid::GetShouldRestock() const
+{
+	if (CurrentTileStock < RequiredTiles && !TileLocations.IsEmpty())
+	{
+		return true;
+	}
+	return false;
+}

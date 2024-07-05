@@ -90,5 +90,6 @@ public:
 	FORCEINLINE float GetTileSpacing() const { return TileSpacing; }
 	FORCEINLINE float GetTileHeight() const { return HexTileMesh->GetBoundingBox().Max.Z*TileScale; }
 	FORCEINLINE void SetSpaceStructure(ASpaceStructure* InSpaceStructure) { SpaceStructure = InSpaceStructure; }
+	bool GetShouldRestock() const;
 };
 
