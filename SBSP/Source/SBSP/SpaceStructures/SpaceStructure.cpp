@@ -81,6 +81,7 @@ void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
 		)))
 		{
 			SpawnedHarbour->SpawnInit(this, HarbourTileRadius);
+			SpawnedHarbour->SetActorRotation(GetActorRotation());
 			Harbours.Add(SpawnedHarbour);
 		}
 	}

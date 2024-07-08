@@ -30,6 +30,9 @@ public:
 	void Restock(int32 AddedStock);
 	static bool IsRobotFree(const AConstructionRobot* Robot);
 	FOnHarbourRestocked OnHarbourRestockedDelegate;
+	
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsIndependent = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,6 +54,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 InitialTileStock = 20; //Initial number of tiles harbour has
 	float LongRadius;
+
 	
 	//Robots
 	void SpawnRobots();
