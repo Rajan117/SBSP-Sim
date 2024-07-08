@@ -4,6 +4,7 @@
 #include "SpaceStructure.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "SBSP/HexGrid/HexGrid.h"
 
 ASpaceStructure::ASpaceStructure()
@@ -79,6 +80,7 @@ void ASpaceStructure::OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 
 	TotalTiles += NumTiles;
 	TotalRobots += NumRobots;
 	TotalLaunches += NumLaunches;
+	if (NumCompletedHarbours >= Harbours.Num()) UKismetSystemLibrary::PrintString(this, "Space Structure Completed");
 }
 
 void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
@@ -91,6 +93,7 @@ void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
 		)))
 		{
 			SpawnedHarbour->SpawnInit(this, HarbourTileRadius);
+			SpawnedHarbour->OnHarbourCompleteDelegate.AddDynamic(this, &ASpaceStructure::OnHarbourCompleted);
 			Harbours.Add(SpawnedHarbour);
 		}
 	}
