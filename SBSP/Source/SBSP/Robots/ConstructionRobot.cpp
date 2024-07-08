@@ -53,11 +53,12 @@ void AConstructionRobot::PlaceTileAtLocation(const FVector& Location)
 
 void AConstructionRobot::PlaceTile()
 {
-	if (!HexTileClass) return;
-	
+	if (!HexTileClass || !HarbourRef) return;
+	const FRotator TargetRotation = HarbourRef->GetActorRotation();
 	if (AHexTile* SpawnedTile = Cast<AHexTile>(GetWorld()->SpawnActor(
 		HexTileClass,
-		&TargetLocation
+		&TargetLocation,
+		&TargetRotation
 	)))
 	{
 		DespawnTile();

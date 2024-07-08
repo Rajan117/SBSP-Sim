@@ -31,6 +31,7 @@ void AHexGrid::SpawnInit(ASpaceStructure* InSpaceStructure, int32 HarbourTileRad
 	GenerateTileLocations();
 	ConstructTiles();
 	InitiateRestockingTimer();
+	SpawnRobots();
 }
 
 void AHexGrid::BeginPlay()
@@ -38,12 +39,12 @@ void AHexGrid::BeginPlay()
 	Super::BeginPlay();
 	CurrentTileStock = InitialTileStock;
 	LongRadius = GetMeshRadius();
-	SpawnRobots();
+	if (bIsIndependent) SpawnInit(nullptr, BigHexagonRadius);
 }
 
 void AHexGrid::Restock(int32 AddedStock)
 {
-	UKismetSystemLibrary::PrintString(this, "Restocked");
+	if (!GetShouldRestock()) return;
 	CurrentTileStock += AddedStock;
 	AddTiles(AddedStock);
 	OnHarbourRestockedDelegate.Broadcast();
@@ -63,6 +64,7 @@ void AHexGrid::AddTiles(int32 NewStock)
 			&SpawnLocation
 		)))
 		{
+			SpawnedTile->SetActorRotation(GetActorRotation());
 			HexTiles.Add(SpawnedTile);
 		}
 	}
@@ -115,13 +117,15 @@ void AHexGrid::GenerateTileLocations()
 			{
 				const FVector Location = FVector(CurrentPoint.X, CurrentPoint.Y, CurrentPoint.Z);
 				TileLocations.Enqueue(Location);
-				CurrentPoint += (SpawnScheme[j]*HexSide);
+				RequiredTiles++;
+				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
 			}
 			if (j==4)
 			{
 				const FVector Location = FVector(CurrentPoint.X, CurrentPoint.Y, CurrentPoint.Z);
 				TileLocations.Enqueue(Location);
-				CurrentPoint += (SpawnScheme[j]*HexSide);
+				RequiredTiles++;
+				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
 				hn++;
 				if (mult==BigHexagonRadius) break;
 			}
@@ -139,16 +143,21 @@ float AHexGrid::GetMeshRadius() const
 
 bool AHexGrid::GetNextTile(FVector& InLocation)
 {
-	if (CurrentTileStock > 0 && !TileLocations.IsEmpty())
+	if (!TileLocations.IsEmpty())
 	{
-		TileLocations.Dequeue(InLocation);
-		CurrentTileStock--;
-		if (!HexTiles.IsEmpty())
+		if (CurrentTileStock > 0)
 		{
-			if (AHexTile* HexTile = HexTiles.Pop()) HexTile->Destroy();
+			TileLocations.Dequeue(InLocation);
+			CurrentTileStock--;
+			if (!HexTiles.IsEmpty())
+			{
+				if (AHexTile* HexTile = HexTiles.Pop()) HexTile->Destroy();
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
+	bIsComplete = true;
 	return false;
 }
 
@@ -188,6 +197,8 @@ void AHexGrid::InitiateRestockingTimer()
 	}
 }
 
+
+
 bool AHexGrid::IsRobotFree(const AConstructionRobot* Robot)
 {
 	return Robot->GetRobotState() == ERobotState::Free;
@@ -195,3 +206,12 @@ bool AHexGrid::IsRobotFree(const AConstructionRobot* Robot)
 }
 
 #pragma endregion 
+
+bool AHexGrid::GetShouldRestock() const
+{
+	if (CurrentTileStock < RequiredTiles && !TileLocations.IsEmpty())
+	{
+		return true;
+	}
+	return false;
+}

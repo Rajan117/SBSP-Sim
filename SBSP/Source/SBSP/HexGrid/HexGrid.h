@@ -30,6 +30,9 @@ public:
 	void Restock(int32 AddedStock);
 	static bool IsRobotFree(const AConstructionRobot* Robot);
 	FOnHarbourRestocked OnHarbourRestockedDelegate;
+	
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsIndependent = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,6 +54,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 InitialTileStock = 20; //Initial number of tiles harbour has
 	float LongRadius;
+
 	
 	//Robots
 	void SpawnRobots();
@@ -74,10 +78,12 @@ private:
 	int32 CurrentTileStock = 0;
 	TArray<AHexTile*> HexTiles;
 	TQueue<FVector> TileLocations;
+	int32 RequiredTiles = 0;
 	UPROPERTY()
 	TArray<AConstructionRobot*> ConstructionRobots;
 	UPROPERTY()
 	ASpaceStructure* SpaceStructure;
+	bool bIsComplete = false;
 	
 	void InitiateRestockingTimer();
 	FTimerHandle RestockTimerHandle;
@@ -89,5 +95,6 @@ public:
 	FORCEINLINE float GetTileSpacing() const { return TileSpacing; }
 	FORCEINLINE float GetTileHeight() const { return HexTileMesh->GetBoundingBox().Max.Z*TileScale; }
 	FORCEINLINE void SetSpaceStructure(ASpaceStructure* InSpaceStructure) { SpaceStructure = InSpaceStructure; }
+	bool GetShouldRestock() const;
 };
 

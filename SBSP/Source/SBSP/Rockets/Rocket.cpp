@@ -44,6 +44,7 @@ void ARocket::SpawnInit(AHexGrid* Harbour, const FVector& InTargetLocation)
 
 void ARocket::Launch()
 {
+	if (HarbourRef && !HarbourRef->GetShouldRestock()) Destroy();
 	NumLaunches++;
 	SetActorLocation(StartLocation);
 	SetActorHiddenInGame(false);
