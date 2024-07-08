@@ -83,6 +83,7 @@ private:
 	TArray<AConstructionRobot*> ConstructionRobots;
 	UPROPERTY()
 	ASpaceStructure* SpaceStructure;
+	bool bIsComplete = false;
 	
 	void InitiateRestockingTimer();
 	FTimerHandle RestockTimerHandle;

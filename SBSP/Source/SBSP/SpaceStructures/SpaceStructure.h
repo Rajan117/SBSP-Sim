@@ -34,9 +34,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	int32 RadiusInHarbours = 2;
 
+	UFUNCTION()
+	void OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches);
+
 private:
 	UPROPERTY()
 	TArray<AHexGrid*> Harbours;
+	int32 NumCompletedHarbours;
 	float LongRadius;
 	void SpawnHarbour(const FVector& SpawnLocation);
+
+	//Stats
+	int32 TotalTiles = 0;
+	int32 TotalRobots = 0;
+	int32 TotalLaunches = 0;
 };

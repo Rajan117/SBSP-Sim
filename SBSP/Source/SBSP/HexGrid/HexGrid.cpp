@@ -119,7 +119,6 @@ void AHexGrid::GenerateTileLocations()
 				TileLocations.Enqueue(Location);
 				RequiredTiles++;
 				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
-				//CurrentPoint += (SpawnScheme[j]*HexSide);
 			}
 			if (j==4)
 			{
@@ -127,7 +126,6 @@ void AHexGrid::GenerateTileLocations()
 				TileLocations.Enqueue(Location);
 				RequiredTiles++;
 				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
-				//CurrentPoint += (SpawnScheme[j]*HexSide);
 				hn++;
 				if (mult==BigHexagonRadius) break;
 			}
@@ -145,16 +143,21 @@ float AHexGrid::GetMeshRadius() const
 
 bool AHexGrid::GetNextTile(FVector& InLocation)
 {
-	if (CurrentTileStock > 0 && !TileLocations.IsEmpty())
+	if (!TileLocations.IsEmpty())
 	{
-		TileLocations.Dequeue(InLocation);
-		CurrentTileStock--;
-		if (!HexTiles.IsEmpty())
+		if (CurrentTileStock > 0)
 		{
-			if (AHexTile* HexTile = HexTiles.Pop()) HexTile->Destroy();
+			TileLocations.Dequeue(InLocation);
+			CurrentTileStock--;
+			if (!HexTiles.IsEmpty())
+			{
+				if (AHexTile* HexTile = HexTiles.Pop()) HexTile->Destroy();
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
+	bIsComplete = true;
 	return false;
 }
 

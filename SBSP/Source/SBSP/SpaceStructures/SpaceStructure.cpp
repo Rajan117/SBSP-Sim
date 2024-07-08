@@ -56,19 +56,29 @@ void ASpaceStructure::GenerateHarbourLocations()
 			{
 				const FVector Location = FVector(CurrentPoint.X, CurrentPoint.Y, CurrentPoint.Z);
 				SpawnHarbour(Location);
-				CurrentPoint += (SpawnScheme[j]*HexSide);
+				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
+
 			}
 			if (j==4)
 			{
 				const FVector Location = FVector(CurrentPoint.X, CurrentPoint.Y, CurrentPoint.Z);
 				SpawnHarbour(Location);
-				CurrentPoint += (SpawnScheme[j]*HexSide);
+				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
+
 				hn++;
 				if (mult==RadiusInHarbours) break;
 			}
 		}
 		
 	}
+}
+
+void ASpaceStructure::OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches)
+{
+	NumCompletedHarbours++;
+	TotalTiles += NumTiles;
+	TotalRobots += NumRobots;
+	TotalLaunches += NumLaunches;
 }
 
 void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
@@ -81,7 +91,6 @@ void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
 		)))
 		{
 			SpawnedHarbour->SpawnInit(this, HarbourTileRadius);
-			SpawnedHarbour->SetActorRotation(GetActorRotation());
 			Harbours.Add(SpawnedHarbour);
 		}
 	}
