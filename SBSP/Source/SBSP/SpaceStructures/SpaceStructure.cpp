@@ -20,6 +20,7 @@ void ASpaceStructure::Tick(float DeltaTime)
 void ASpaceStructure::BeginPlay()
 {
 	Super::BeginPlay();
+	StartTime = GetWorld()->GetTimeSeconds();
 	LongRadius = (GetMeshRadius()+10)*(HarbourTileRadius*2+1);
 	GenerateHarbourLocations();
 }
@@ -29,6 +30,11 @@ float ASpaceStructure::GetMeshRadius() const
 	if (!HexTileMesh) return -1.f;
 	const float MaxX = HexTileMesh->GetBoundingBox().Max.X;
 	return 1.f*MaxX;
+}
+
+void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController)
+{
+	SBSPPlayerController = OwningSBSPPlayerController;
 }
 
 void ASpaceStructure::GenerateHarbourLocations()
@@ -80,7 +86,13 @@ void ASpaceStructure::OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 
 	TotalTiles += NumTiles;
 	TotalRobots += NumRobots;
 	TotalLaunches += NumLaunches;
-	if (NumCompletedHarbours >= Harbours.Num()) UKismetSystemLibrary::PrintString(this, "Space Structure Completed");
+	if (NumCompletedHarbours >= Harbours.Num()) HandleCompletion();
+}
+
+void ASpaceStructure::HandleCompletion()
+{
+	TotalTime = GetWorld()->GetTimeSeconds() - StartTime;
+	OnStructureCompletedDelegate.Broadcast(TotalTiles, TotalRobots, TotalLaunches, TotalTime);
 }
 
 void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)

@@ -3,16 +3,15 @@
 
 #include "SBSPPlayerController.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "SBSP/HUD/SBSPHUD.h"
+#include "SBSP/SpaceStructures/SpaceStructure.h"
 
-
-// Sets default values
 ASBSPPlayerController::ASBSPPlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void ASBSPPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -21,10 +20,34 @@ void ASBSPPlayerController::BeginPlay()
 	SetInputMode(InputModeGameAndUI);
 	SetShowMouseCursor(true);
 
+	SpawnStructure();
 	if (ASBSPHUD* HUD = Cast<ASBSPHUD>(GetHUD()))
 	{
 		SBSPHUD = HUD;
 		SBSPHUD->AddSimOverlay();
+	}
+}
+
+void ASBSPPlayerController::SpawnStructure()
+{
+	if (SpaceStructureClass)
+	{
+		SpaceStructure = Cast<ASpaceStructure>(GetWorld()->SpawnActor(SpaceStructureClass));
+		if (SpaceStructure)
+		{
+			SpaceStructure->OnStructureCompletedDelegate.AddDynamic(this, &ASBSPPlayerController::OnSpaceStructureCompleted);
+		}
+	}
+}
+
+void ASBSPPlayerController::OnSpaceStructureCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches,
+	float TotalTime)
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	if (SBSPHUD)
+	{
+		SBSPHUD->RemoveSimOverlay();
+		SBSPHUD->AddResultsOverlay(NumTiles, NumRobots, NumLaunches, TotalTime);
 	}
 }
 
