@@ -5,6 +5,7 @@
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
 #include "SBSP/HexGrid/HexGrid.h"
 
 ASpaceStructure::ASpaceStructure()
@@ -17,9 +18,8 @@ void ASpaceStructure::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ASpaceStructure::BeginPlay()
+void ASpaceStructure::StartConstruction()
 {
-	Super::BeginPlay();
 	StartTime = GetWorld()->GetTimeSeconds();
 	LongRadius = (GetMeshRadius()+10)*(HarbourTileRadius*2+1);
 	GenerateHarbourLocations();
@@ -32,9 +32,12 @@ float ASpaceStructure::GetMeshRadius() const
 	return 1.f*MaxX;
 }
 
-void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController)
+void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController, FSimSettings SimSettings)
 {
 	SBSPPlayerController = OwningSBSPPlayerController;
+	HarbourTileRadius = SimSettings.TileRadius;
+	RadiusInHarbours = SimSettings.StructureRadius;
+	StartConstruction();
 }
 
 void ASpaceStructure::GenerateHarbourLocations()

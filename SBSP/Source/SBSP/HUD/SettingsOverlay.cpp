@@ -4,6 +4,8 @@
 #include "SettingsOverlay.h"
 
 #include "Components/Button.h"
+#include "Components/SpinBox.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "SBSP/Controllers/SBSPPlayerController.h"
 
 void USettingsOverlay::NativeConstruct()
@@ -19,5 +21,7 @@ void USettingsOverlay::NativeConstruct()
 
 void USettingsOverlay::OnStartButtonPressed()
 {
-	SBSPPlayerController->StartSimulation();
+	SimSettings.StructureRadius = StructureRadiusInput->GetValue();
+	SimSettings.TileRadius = HarbourRadiusInput->GetValue();
+	SBSPPlayerController->StartSimulation(SimSettings);
 }

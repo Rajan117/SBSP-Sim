@@ -6,7 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "SpaceStructure.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnStructureCompleted, int32, NumTiles, int32, NumRobots, int32, NumLaunches, float, TotalTime);
+struct FSimSettings;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnStructureCompleted, int32, NumTiles, int32, NumRobots, int32,
+                                              NumLaunches, float, TotalTime);
 
 class ASBSPPlayerController;
 class UResultsOverlay;
@@ -22,12 +24,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	float GetMeshRadius() const;
-	void SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController);
+	void SpawnInit(
+		ASBSPPlayerController* OwningSBSPPlayerController,
+		FSimSettings SimSettings);
 	FOnStructureCompleted OnStructureCompletedDelegate;
+	void StartConstruction();
 	
 protected:
-	virtual void BeginPlay() override;
-
 	void GenerateHarbourLocations();
 	UFUNCTION()
 	void OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches);

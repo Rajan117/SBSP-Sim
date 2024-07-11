@@ -34,10 +34,10 @@ class SBSP_API ASBSPPlayerController : public APlayerController
 public:
 	ASBSPPlayerController();
 	virtual void BeginPlay() override;
-	void StartSimulation();
+	void StartSimulation(FSimSettings InSimSettings);
 
 protected:
-	void SpawnStructure();
+	void SpawnStructure(FSimSettings InSimSettings);
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASpaceStructure> SpaceStructureClass;
 	UFUNCTION()
@@ -50,7 +50,8 @@ private:
 	ASBSPHUD* SBSPHUD;
 	UPROPERTY()
 	ASpaceStructure* SpaceStructure;
-
+	FSimSettings SimSettings;
+	
 public:
 	FORCEINLINE ASpaceStructure* GetSpaceStructure() const { return  SpaceStructure; }
 

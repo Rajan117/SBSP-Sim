@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
 #include "SettingsOverlay.generated.h"
 
+class USpinBox;
 class UButton;
-class ASBSPPlayerController;
 /**
  * 
  */
@@ -21,6 +22,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartButton;
 
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* StructureRadiusInput;
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* HarbourRadiusInput;
+
 protected:
 	UFUNCTION()
 	void OnStartButtonPressed();
@@ -28,4 +34,6 @@ protected:
 private:
 	UPROPERTY()
 	ASBSPPlayerController* SBSPPlayerController;
+	UPROPERTY()
+	FSimSettings SimSettings;
 };
