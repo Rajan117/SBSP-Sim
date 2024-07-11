@@ -4,6 +4,7 @@
 #include "SBSPHUD.h"
 
 #include "ResultsOverlay.h"
+#include "SettingsOverlay.h"
 #include "SimOverlay.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -63,6 +64,26 @@ void ASBSPHUD::RemoveResultsOverlay()
 	{
 		ResultsOverlayRef->RemoveFromParent();
 		ResultsOverlayRef = nullptr;
+	}
+}
+
+void ASBSPHUD::AddSettingsOverlay()
+{
+	if (SettingsOverlayClass)
+	{
+		SettingsOverlayRef = CreateWidget<USettingsOverlay>(GetOwningPlayerController(), SettingsOverlayClass);
+		if (SettingsOverlayRef)
+		{
+			SettingsOverlayRef->AddToViewport();
+		}
+	}
+}
+
+void ASBSPHUD::RemoveSettingsOverlays()
+{
+	if (SettingsOverlayRef)
+	{
+		SettingsOverlayRef->RemoveFromParent();
 	}
 }
 
