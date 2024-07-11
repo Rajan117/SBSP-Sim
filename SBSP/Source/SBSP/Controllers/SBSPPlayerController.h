@@ -17,6 +17,7 @@ class SBSP_API ASBSPPlayerController : public APlayerController
 public:
 	ASBSPPlayerController();
 	virtual void BeginPlay() override;
+	void StartSimulation();
 
 protected:
 	void SpawnStructure();

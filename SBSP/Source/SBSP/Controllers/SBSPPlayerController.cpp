@@ -20,12 +20,18 @@ void ASBSPPlayerController::BeginPlay()
 	SetInputMode(InputModeGameAndUI);
 	SetShowMouseCursor(true);
 
-	SpawnStructure();
 	if (ASBSPHUD* HUD = Cast<ASBSPHUD>(GetHUD()))
 	{
 		SBSPHUD = HUD;
-		SBSPHUD->AddSimOverlay();
+		SBSPHUD->AddSettingsOverlay();
 	}
+}
+
+void ASBSPPlayerController::StartSimulation()
+{
+	SBSPHUD->RemoveSettingsOverlays();
+	SBSPHUD->AddSimOverlay();
+	SpawnStructure();
 }
 
 void ASBSPPlayerController::SpawnStructure()
