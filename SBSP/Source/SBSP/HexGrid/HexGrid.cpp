@@ -148,6 +148,15 @@ bool AHexGrid::GetNextTile(FVector& InLocation)
 		if (CurrentTileStock > 0)
 		{
 			TileLocations.Dequeue(InLocation);
+			if (TileLocations.IsEmpty())
+			{
+				bIsComplete = true;
+				OnHarbourCompleteDelegate.Broadcast(
+					RequiredTiles,
+					ConstructionRobots.Num(),
+					RocketRef->GetNumLaunches()
+				);
+			}
 			CurrentTileStock--;
 			if (!HexTiles.IsEmpty())
 			{
@@ -157,7 +166,6 @@ bool AHexGrid::GetNextTile(FVector& InLocation)
 		}
 		return false;
 	}
-	bIsComplete = true;
 	return false;
 }
 

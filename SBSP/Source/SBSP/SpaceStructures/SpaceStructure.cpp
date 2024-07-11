@@ -4,6 +4,7 @@
 #include "SpaceStructure.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "SBSP/HexGrid/HexGrid.h"
 
 ASpaceStructure::ASpaceStructure()
@@ -19,6 +20,7 @@ void ASpaceStructure::Tick(float DeltaTime)
 void ASpaceStructure::BeginPlay()
 {
 	Super::BeginPlay();
+	StartTime = GetWorld()->GetTimeSeconds();
 	LongRadius = (GetMeshRadius()+10)*(HarbourTileRadius*2+1);
 	GenerateHarbourLocations();
 }
@@ -28,6 +30,11 @@ float ASpaceStructure::GetMeshRadius() const
 	if (!HexTileMesh) return -1.f;
 	const float MaxX = HexTileMesh->GetBoundingBox().Max.X;
 	return 1.f*MaxX;
+}
+
+void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController)
+{
+	SBSPPlayerController = OwningSBSPPlayerController;
 }
 
 void ASpaceStructure::GenerateHarbourLocations()
@@ -79,6 +86,13 @@ void ASpaceStructure::OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 
 	TotalTiles += NumTiles;
 	TotalRobots += NumRobots;
 	TotalLaunches += NumLaunches;
+	if (NumCompletedHarbours >= Harbours.Num()) HandleCompletion();
+}
+
+void ASpaceStructure::HandleCompletion()
+{
+	TotalTime = GetWorld()->GetTimeSeconds() - StartTime;
+	OnStructureCompletedDelegate.Broadcast(TotalTiles, TotalRobots, TotalLaunches, TotalTime);
 }
 
 void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
@@ -91,6 +105,7 @@ void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
 		)))
 		{
 			SpawnedHarbour->SpawnInit(this, HarbourTileRadius);
+			SpawnedHarbour->OnHarbourCompleteDelegate.AddDynamic(this, &ASpaceStructure::OnHarbourCompleted);
 			Harbours.Add(SpawnedHarbour);
 		}
 	}

@@ -14,6 +14,7 @@ class AHexTile;
 class AConstructionRobot;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHarbourRestocked);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHarbourComplete, int32, NumTiles, int32, NumRobots, int32, NumLaunches);
 
 UCLASS()
 class SBSP_API AHexGrid : public AActor
@@ -30,6 +31,7 @@ public:
 	void Restock(int32 AddedStock);
 	static bool IsRobotFree(const AConstructionRobot* Robot);
 	FOnHarbourRestocked OnHarbourRestockedDelegate;
+	FOnHarbourComplete OnHarbourCompleteDelegate;
 	
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsIndependent = false;

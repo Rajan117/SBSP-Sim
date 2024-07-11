@@ -56,4 +56,5 @@ private:
 public:
 	FORCEINLINE void SetTargetLocation(const FVector& InLocation) { TargetLocation = InLocation; }
 	FORCEINLINE void SetStartLocation(const FVector& InLocation) { StartLocation = InLocation; }
+	FORCEINLINE int32 GetNumLaunches() const { return NumLaunches; }
 };
