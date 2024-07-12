@@ -75,7 +75,7 @@ void ASpaceStructure::GenerateHarbourLocations()
 				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
 
 				hn++;
-				if (mult==RadiusInHarbours) break;
+				if (mult==SimSettings.StructureRadius) break;
 			}
 		}
 		
