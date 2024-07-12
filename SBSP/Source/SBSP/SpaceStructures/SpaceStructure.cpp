@@ -5,6 +5,7 @@
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
 #include "SBSP/HexGrid/HexGrid.h"
 
 ASpaceStructure::ASpaceStructure()
@@ -17,11 +18,10 @@ void ASpaceStructure::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ASpaceStructure::BeginPlay()
+void ASpaceStructure::StartConstruction()
 {
-	Super::BeginPlay();
 	StartTime = GetWorld()->GetTimeSeconds();
-	LongRadius = (GetMeshRadius()+10)*(HarbourTileRadius*2+1);
+	LongRadius = (GetMeshRadius()+10)*(SimSettings.TileRadius*2+1);
 	GenerateHarbourLocations();
 }
 
@@ -32,9 +32,11 @@ float ASpaceStructure::GetMeshRadius() const
 	return 1.f*MaxX;
 }
 
-void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController)
+void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController, FSimSettings InSimSettings)
 {
 	SBSPPlayerController = OwningSBSPPlayerController;
+	SimSettings = InSimSettings;
+	StartConstruction();
 }
 
 void ASpaceStructure::GenerateHarbourLocations()
@@ -54,7 +56,7 @@ void ASpaceStructure::GenerateHarbourLocations()
 	const float HexSide = LongRadius;
 	const int NumSpawns = SpawnScheme.Num();
 	
-	for (int mult = 0; mult <= RadiusInHarbours; mult++)
+	for (int mult = 0; mult <= SimSettings.StructureRadius; mult++)
 	{
 		int hn = 0;
 		for (int j = 0; j < NumSpawns; j++)
@@ -73,7 +75,7 @@ void ASpaceStructure::GenerateHarbourLocations()
 				CurrentPoint += GetActorRotation().RotateVector(SpawnScheme[j] * HexSide);
 
 				hn++;
-				if (mult==RadiusInHarbours) break;
+				if (mult==SimSettings.StructureRadius) break;
 			}
 		}
 		
@@ -104,7 +106,7 @@ void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
 		&SpawnLocation
 		)))
 		{
-			SpawnedHarbour->SpawnInit(this, HarbourTileRadius);
+			SpawnedHarbour->SpawnInit(this, SimSettings);
 			SpawnedHarbour->OnHarbourCompleteDelegate.AddDynamic(this, &ASpaceStructure::OnHarbourCompleted);
 			Harbours.Add(SpawnedHarbour);
 		}

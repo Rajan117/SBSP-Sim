@@ -20,15 +20,21 @@ void ASBSPPlayerController::BeginPlay()
 	SetInputMode(InputModeGameAndUI);
 	SetShowMouseCursor(true);
 
-	SpawnStructure();
 	if (ASBSPHUD* HUD = Cast<ASBSPHUD>(GetHUD()))
 	{
 		SBSPHUD = HUD;
-		SBSPHUD->AddSimOverlay();
+		SBSPHUD->AddSettingsOverlay();
 	}
 }
 
-void ASBSPPlayerController::SpawnStructure()
+void ASBSPPlayerController::StartSimulation(FSimSettings InSimSettings)
+{
+	SBSPHUD->RemoveSettingsOverlays();
+	SBSPHUD->AddSimOverlay();
+	SpawnStructure(InSimSettings);
+}
+
+void ASBSPPlayerController::SpawnStructure(FSimSettings InSimSettings)
 {
 	if (SpaceStructureClass)
 	{
@@ -36,6 +42,7 @@ void ASBSPPlayerController::SpawnStructure()
 		if (SpaceStructure)
 		{
 			SpaceStructure->OnStructureCompletedDelegate.AddDynamic(this, &ASBSPPlayerController::OnSpaceStructureCompleted);
+			SpaceStructure->SpawnInit(this, InSimSettings);
 		}
 	}
 }
