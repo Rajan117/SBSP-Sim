@@ -21,7 +21,7 @@ void ASpaceStructure::Tick(float DeltaTime)
 void ASpaceStructure::StartConstruction()
 {
 	StartTime = GetWorld()->GetTimeSeconds();
-	LongRadius = (GetMeshRadius()+10)*(HarbourTileRadius*2+1);
+	LongRadius = (GetMeshRadius()+10)*(SimSettings.TileRadius*2+1);
 	GenerateHarbourLocations();
 }
 
