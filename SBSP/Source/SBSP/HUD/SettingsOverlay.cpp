@@ -23,5 +23,10 @@ void USettingsOverlay::OnStartButtonPressed()
 {
 	SimSettings.StructureRadius = StructureRadiusInput->GetValue();
 	SimSettings.TileRadius = HarbourRadiusInput->GetValue();
+	SimSettings.InitStock = InitStockInput->GetValue();
+	SimSettings.NumRobots = NumRobotsInput->GetValue();
+	SimSettings.RobotSpeed = RobotSpeedInput->GetValue();
+	SimSettings.LaunchFrequency = LaunchFreqInput->GetValue();
+	SimSettings.TilePayload = TilePayloadInput->GetValue();
 	SBSPPlayerController->StartSimulation(SimSettings);
 }

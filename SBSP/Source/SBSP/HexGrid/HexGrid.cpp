@@ -10,6 +10,7 @@
 #include "SBSP/HexGrid/HexTile.h"
 #include "SBSP/Robots/ConstructionRobot.h"
 #include "SBSP/Rockets/Rocket.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
 
 
 AHexGrid::AHexGrid()
@@ -24,10 +25,12 @@ void AHexGrid::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void AHexGrid::SpawnInit(ASpaceStructure* InSpaceStructure, int32 HarbourTileRadius)
+void AHexGrid::SpawnInit(ASpaceStructure* InSpaceStructure, FSimSettings InSimSettings)
 {
 	SpaceStructure = InSpaceStructure;
-	BigHexagonRadius = HarbourTileRadius;
+	BigHexagonRadius = SimSettings.TileRadius;
+	InitialTileStock = SimSettings.InitStock;
+	NumberOfRobots = SimSettings.NumRobots;
 	GenerateTileLocations();
 	ConstructTiles();
 	InitiateRestockingTimer();
@@ -39,7 +42,13 @@ void AHexGrid::BeginPlay()
 	Super::BeginPlay();
 	CurrentTileStock = InitialTileStock;
 	LongRadius = GetMeshRadius();
-	if (bIsIndependent) SpawnInit(nullptr, BigHexagonRadius);
+	if (bIsIndependent)
+	{
+		SimSettings.TileRadius = BigHexagonRadius;
+		SimSettings.NumRobots = NumberOfRobots;
+		SimSettings.InitStock = InitialTileStock;
+		SpawnInit(nullptr, SimSettings);
+	}
 }
 
 void AHexGrid::Restock(int32 AddedStock)
@@ -108,7 +117,7 @@ void AHexGrid::GenerateTileLocations()
 	const float HexSide = LongRadius + TileSpacing;
 	const int NumSpawns = SpawnScheme.Num();
 	
-	for (int mult = 0; mult <= BigHexagonRadius; mult++)
+	for (int mult = 0; mult <= SimSettings.TileRadius; mult++)
 	{
 		int hn = 0;
 		for (int j = 0; j < NumSpawns; j++)

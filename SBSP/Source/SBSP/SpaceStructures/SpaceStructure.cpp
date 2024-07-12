@@ -32,11 +32,10 @@ float ASpaceStructure::GetMeshRadius() const
 	return 1.f*MaxX;
 }
 
-void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController, FSimSettings SimSettings)
+void ASpaceStructure::SpawnInit(ASBSPPlayerController* OwningSBSPPlayerController, FSimSettings InSimSettings)
 {
 	SBSPPlayerController = OwningSBSPPlayerController;
-	HarbourTileRadius = SimSettings.TileRadius;
-	RadiusInHarbours = SimSettings.StructureRadius;
+	SimSettings = InSimSettings;
 	StartConstruction();
 }
 
@@ -57,7 +56,7 @@ void ASpaceStructure::GenerateHarbourLocations()
 	const float HexSide = LongRadius;
 	const int NumSpawns = SpawnScheme.Num();
 	
-	for (int mult = 0; mult <= RadiusInHarbours; mult++)
+	for (int mult = 0; mult <= SimSettings.StructureRadius; mult++)
 	{
 		int hn = 0;
 		for (int j = 0; j < NumSpawns; j++)
@@ -107,7 +106,7 @@ void ASpaceStructure::SpawnHarbour(const FVector& SpawnLocation)
 		&SpawnLocation
 		)))
 		{
-			SpawnedHarbour->SpawnInit(this, HarbourTileRadius);
+			SpawnedHarbour->SpawnInit(this, SimSettings);
 			SpawnedHarbour->OnHarbourCompleteDelegate.AddDynamic(this, &ASpaceStructure::OnHarbourCompleted);
 			Harbours.Add(SpawnedHarbour);
 		}

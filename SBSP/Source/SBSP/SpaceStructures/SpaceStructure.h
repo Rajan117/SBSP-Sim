@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
 #include "SpaceStructure.generated.h"
 
 struct FSimSettings;
@@ -26,7 +27,7 @@ public:
 	float GetMeshRadius() const;
 	void SpawnInit(
 		ASBSPPlayerController* OwningSBSPPlayerController,
-		FSimSettings SimSettings);
+		FSimSettings InSimSettings);
 	FOnStructureCompleted OnStructureCompletedDelegate;
 	void StartConstruction();
 	
@@ -50,6 +51,7 @@ protected:
 	TSubclassOf<UResultsOverlay> ResultsWidgetClass;
 
 private:
+	FSimSettings SimSettings;
 	UPROPERTY()
 	TArray<AHexGrid*> Harbours;
 	int32 NumCompletedHarbours;

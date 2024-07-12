@@ -6,8 +6,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Containers/Queue.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
 #include "HexGrid.generated.h"
 
+struct FSimSettings;
 class ASpaceStructure;
 class ARocket;
 class AHexTile;
@@ -25,7 +27,7 @@ public:
 	AHexGrid();
 	virtual void Tick(float DeltaSeconds) override;
 
-	void SpawnInit(ASpaceStructure* InSpaceStructure, int32 HarbourTileRadius);
+	void SpawnInit(ASpaceStructure* InSpaceStructure, FSimSettings InSimSettings);
 	float GetMeshRadius() const;
 	bool GetNextTile(FVector& InLocation);
 	void Restock(int32 AddedStock);
@@ -77,6 +79,7 @@ protected:
 	USceneComponent* SceneRootComponent;
 	
 private:
+	FSimSettings SimSettings;
 	int32 CurrentTileStock = 0;
 	TArray<AHexTile*> HexTiles;
 	TQueue<FVector> TileLocations;

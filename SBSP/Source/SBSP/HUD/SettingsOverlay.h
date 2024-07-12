@@ -21,11 +21,24 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartButton;
-
+	//Structure
 	UPROPERTY(meta = (BindWidget))
 	USpinBox* StructureRadiusInput;
+	//Harbour
 	UPROPERTY(meta = (BindWidget))
 	USpinBox* HarbourRadiusInput;
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* InitStockInput;
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* NumRobotsInput;
+	//Robots
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* RobotSpeedInput;
+	//Rocket
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* LaunchFreqInput;
+	UPROPERTY(meta = (BindWidget))
+	USpinBox* TilePayloadInput;
 
 protected:
 	UFUNCTION()
