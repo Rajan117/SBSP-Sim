@@ -22,7 +22,11 @@ public:
 
 	void AddSimOverlay();
 	void RemoveSimOverlay();
-	void AddResultsOverlay(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime);
+	void AddResultsOverlay(int32 NumTiles,
+		int32 NumRobots,
+		int32 NumLaunches,
+		float TotalTime,
+		float TotalDistanceRobotsTravelled);
 	void RemoveResultsOverlay();
 	void AddSettingsOverlay();
 	void RemoveSettingsOverlays();

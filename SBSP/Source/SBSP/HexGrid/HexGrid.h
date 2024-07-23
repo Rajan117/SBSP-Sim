@@ -16,7 +16,7 @@ class AHexTile;
 class AConstructionRobot;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHarbourRestocked);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHarbourComplete, int32, NumTiles, int32, NumRobots, int32, NumLaunches);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHarbourComplete, int32, NumTiles, int32, NumRobots, int32, NumLaunches, float, TotalDistanceRobotsTravelled);
 
 UCLASS()
 class SBSP_API AHexGrid : public AActor
@@ -101,5 +101,6 @@ public:
 	FORCEINLINE float GetTileHeight() const { return HexTileMesh->GetBoundingBox().Max.Z*TileScale; }
 	FORCEINLINE void SetSpaceStructure(ASpaceStructure* InSpaceStructure) { SpaceStructure = InSpaceStructure; }
 	bool GetShouldRestock() const;
+	float GetTotalDistanceRobotsTravelled();
 };
 

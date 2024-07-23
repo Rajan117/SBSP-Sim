@@ -5,10 +5,12 @@
 
 #include "Components/TextBlock.h"
 
-void UResultsOverlay::SetResults(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime)
+void UResultsOverlay::SetResults(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime, float TotalDistanceRobotsTravelled)
 {
 	TilesText->SetText(FText::FromString(FString::FromInt(NumTiles)));
 	RobotsText->SetText(FText::FromString(FString::FromInt(NumRobots)));
 	LaunchesText->SetText(FText::FromString(FString::FromInt(NumLaunches)));
 	TimeText->SetText(FText::FromString(FString::SanitizeFloat(TotalTime)));
+	DistanceText->SetText(FText::FromString(FString::SanitizeFloat(TotalDistanceRobotsTravelled/100.f)));
 }
+

@@ -8,8 +8,8 @@
 #include "SpaceStructure.generated.h"
 
 struct FSimSettings;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnStructureCompleted, int32, NumTiles, int32, NumRobots, int32,
-                                              NumLaunches, float, TotalTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FOnStructureCompleted, int32, NumTiles, int32, NumRobots, int32,
+                                              NumLaunches, float, TotalTime, float, TotalDistanceRobotsTravelled);
 
 class ASBSPPlayerController;
 class UResultsOverlay;
@@ -34,7 +34,10 @@ public:
 protected:
 	void GenerateHarbourLocations();
 	UFUNCTION()
-	void OnHarbourCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches);
+	void OnHarbourCompleted(int32 NumTiles,
+		int32 NumRobots,
+		int32 NumLaunches,
+		float TotalDistanceRobotsTravelled);
 	void HandleCompletion();
 	
 	//Harbours and Tiles
@@ -66,4 +69,5 @@ private:
 	int32 TotalLaunches = 0;
 	float TotalTime = 0.f;
 	float StartTime = 0.f;
+	float DistanceRobotsTravelled = 0.f;
 };

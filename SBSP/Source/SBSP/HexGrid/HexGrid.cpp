@@ -154,7 +154,8 @@ bool AHexGrid::GetNextTile(FVector& InLocation)
 				OnHarbourCompleteDelegate.Broadcast(
 					RequiredTiles,
 					ConstructionRobots.Num(),
-					RocketRef->GetNumLaunches()
+					RocketRef->GetNumLaunches(),
+					GetTotalDistanceRobotsTravelled()
 				);
 			}
 			CurrentTileStock--;
@@ -222,4 +223,15 @@ bool AHexGrid::GetShouldRestock() const
 		return true;
 	}
 	return false;
+}
+
+float AHexGrid::GetTotalDistanceRobotsTravelled()
+{
+	float TotalDistanceTravelled = 0;
+	for (AConstructionRobot* ConstructionRobot : ConstructionRobots)
+	{
+		if (!ConstructionRobot) continue;
+		TotalDistanceTravelled += ConstructionRobot->GetDistanceTravelled();
+	}
+	return TotalDistanceTravelled;
 }

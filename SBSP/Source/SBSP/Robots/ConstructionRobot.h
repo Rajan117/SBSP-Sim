@@ -62,6 +62,7 @@ private:
 	void MoveToTarget(float DeltaTime);
 	bool CanMove();
 	void PointToLocation(const FVector& Location);
+	float DistanceTravelled = 0;
 
 	//Tile
 	UPROPERTY()
@@ -75,4 +76,5 @@ public:
 	FORCEINLINE void SetTargetLocation(const FVector& Location) { TargetLocation = Location; }
 	FORCEINLINE void SetHarbour(AHexGrid* InHarbourRef) { HarbourRef = InHarbourRef; }
 	FORCEINLINE ERobotState GetRobotState() const { return RobotState; }
+	FORCEINLINE float GetDistanceTravelled() const { return DistanceTravelled; }
 };

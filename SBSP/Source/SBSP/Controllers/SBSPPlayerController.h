@@ -41,7 +41,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASpaceStructure> SpaceStructureClass;
 	UFUNCTION()
-	void OnSpaceStructureCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime);
+	void OnSpaceStructureCompleted(int32 NumTiles,
+		int32 NumRobots,
+		int32 NumLaunches,
+		float TotalTime,
+		float TotalDistanceRobotsTravelled);
 	
 
 

@@ -45,14 +45,14 @@ void ASBSPHUD::RemoveSimOverlay()
 	}
 }
 
-void ASBSPHUD::AddResultsOverlay(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime)
+void ASBSPHUD::AddResultsOverlay(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime, float TotalDistanceRobotsTravelled)
 {
 	if (ResultsOverlayClass)
 	{
 		ResultsOverlayRef = CreateWidget<UResultsOverlay>(GetOwningPlayerController(), ResultsOverlayClass);
 		if (ResultsOverlayRef)
 		{
-			ResultsOverlayRef->SetResults(NumTiles, NumRobots, NumLaunches, TotalTime);
+			ResultsOverlayRef->SetResults(NumTiles, NumRobots, NumLaunches, TotalTime, TotalDistanceRobotsTravelled);
 			ResultsOverlayRef->AddToViewport();
 		}
 	}

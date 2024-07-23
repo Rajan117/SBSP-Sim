@@ -23,7 +23,13 @@ public:
 	UTextBlock* LaunchesText;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TimeText;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* DistanceText;
 
-	void SetResults(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime);
+	void SetResults(int32 NumTiles,
+		int32 NumRobots,
+		int32 NumLaunches,
+		float TotalTime,
+		float TotalDistanceRobotsTravelled);
 	
 };

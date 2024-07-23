@@ -48,13 +48,13 @@ void ASBSPPlayerController::SpawnStructure(FSimSettings InSimSettings)
 }
 
 void ASBSPPlayerController::OnSpaceStructureCompleted(int32 NumTiles, int32 NumRobots, int32 NumLaunches,
-	float TotalTime)
+	float TotalTime, float TotalDistanceRobotsTravelled)
 {
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
 	if (SBSPHUD)
 	{
 		SBSPHUD->RemoveSimOverlay();
-		SBSPHUD->AddResultsOverlay(NumTiles, NumRobots, NumLaunches, TotalTime);
+		SBSPHUD->AddResultsOverlay(NumTiles, NumRobots, NumLaunches, TotalTime, TotalDistanceRobotsTravelled);
 	}
 }
 

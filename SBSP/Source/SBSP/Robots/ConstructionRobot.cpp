@@ -98,6 +98,8 @@ void AConstructionRobot::MoveToTarget(const float DeltaTime)
 		NewTargetLocation,
 		DeltaTime,
 		RobotSpeed);
+	
+	DistanceTravelled += FVector::Dist(GetActorLocation(), NewLocation);
 	SetActorLocation(NewLocation);
 	PointToLocation(TargetLocation);
 	
