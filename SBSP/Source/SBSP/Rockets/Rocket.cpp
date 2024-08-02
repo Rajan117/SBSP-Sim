@@ -56,7 +56,6 @@ void ARocket::Dock()
 	if (!HarbourRef) return;
 	bCanMove = false;
 	HarbourRef->Restock(NumTiles);
-	
 	GetWorld()->GetTimerManager().SetTimer(
 	DockingTimerHandle,
 	this,
