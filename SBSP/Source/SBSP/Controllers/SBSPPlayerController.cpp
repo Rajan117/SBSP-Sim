@@ -37,7 +37,40 @@ void ASBSPPlayerController::StartSimulation(FSimSettings InSimSettings)
 
 void ASBSPPlayerController::SaveSimResultsToCSV()
 {
+	FString SaveDirectory = FPaths::ProjectDir();
+	FString FileName = "SimulationResults_" + FDateTime::Now().ToString() + ".csv";
+	FString FilePath = SaveDirectory + FileName;
+
+	TArray<FString> CSVLines;
 	
+	//Sim Settings
+	CSVLines.Add(TEXT("Setting,Value"));
+
+	CSVLines.Add(TEXT("StructureRadius," + SimSettings.StructureRadius));
+	CSVLines.Add(TEXT("InitStock," + SimSettings.InitStock));
+	CSVLines.Add(TEXT("TileRadius," + SimSettings.TileRadius));
+	CSVLines.Add(TEXT("NumRobots," + SimSettings.NumRobots));
+	CSVLines.Add(TEXT("RobotSpeed," + FString::SanitizeFloat(SimSettings.RobotSpeed)));
+	CSVLines.Add(TEXT("LaunchFrequency," + FString::SanitizeFloat(SimSettings.LaunchFrequency)));
+	CSVLines.Add(TEXT("TilePayload," + SimSettings.TilePayload));
+
+	//SimResults
+	CSVLines.Add(TEXT("Result,Value"));
+
+	CSVLines.Add(TEXT("TotalTiles," + SimResults.TotalTiles));
+	CSVLines.Add(TEXT("TotalRobots," + SimResults.TotalRobots));
+	CSVLines.Add(TEXT("TotalLaunches," + SimResults.TotalLaunches));
+	CSVLines.Add(TEXT("TotalTime," + FString::SanitizeFloat(SimResults.TotalTime)));
+	CSVLines.Add(TEXT("TotalDistanceRobotsTravelled," + FString::SanitizeFloat(SimResults.TotalDistanceRobotsTravelled)));
+
+	if (bool bIsSaved = FFileHelper::SaveStringArrayToFile(CSVLines, *FilePath))
+	{
+		UKismetSystemLibrary::PrintString(this, "Saved results to: " + FilePath);
+	}
+	else
+	{
+		UKismetSystemLibrary::PrintString(this, "Failed to save results to: " + FilePath);
+	}
 }
 
 void ASBSPPlayerController::SpawnStructure(FSimSettings InSimSettings)
