@@ -29,9 +29,15 @@ void ASBSPPlayerController::BeginPlay()
 
 void ASBSPPlayerController::StartSimulation(FSimSettings InSimSettings)
 {
+	SimSettings = InSimSettings;
 	SBSPHUD->RemoveSettingsOverlays();
 	SBSPHUD->AddSimOverlay();
 	SpawnStructure(InSimSettings);
+}
+
+void ASBSPPlayerController::SaveSimResultsToCSV()
+{
+	
 }
 
 void ASBSPPlayerController::SpawnStructure(FSimSettings InSimSettings)
@@ -56,6 +62,11 @@ void ASBSPPlayerController::OnSpaceStructureCompleted(int32 NumTiles, int32 NumR
 		SBSPHUD->RemoveSimOverlay();
 		SBSPHUD->AddResultsOverlay(NumTiles, NumRobots, NumLaunches, TotalTime, TotalDistanceRobotsTravelled);
 	}
+	SimResults.TotalTiles = NumTiles;
+	SimResults.TotalRobots = NumRobots;
+	SimResults.TotalLaunches = NumLaunches;
+	SimResults.TotalTime = TotalTime;
+	SimResults.TotalDistanceRobotsTravelled = TotalDistanceRobotsTravelled;
 }
 
 
