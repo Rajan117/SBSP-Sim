@@ -3,7 +3,18 @@
 
 #include "ResultsOverlay.h"
 
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "SBSP/Controllers/SBSPPlayerController.h"
+
+void UResultsOverlay::NativeConstruct()
+{
+	Super::NativeConstruct();
+	if (SaveButton)
+	{
+		SaveButton->OnClicked.AddDynamic(this, &UResultsOverlay::OnSaveButtonClicked);
+	}
+}
 
 void UResultsOverlay::SetResults(int32 NumTiles, int32 NumRobots, int32 NumLaunches, float TotalTime, float TotalDistanceRobotsTravelled)
 {
@@ -12,5 +23,13 @@ void UResultsOverlay::SetResults(int32 NumTiles, int32 NumRobots, int32 NumLaunc
 	LaunchesText->SetText(FText::FromString(FString::FromInt(NumLaunches)));
 	TimeText->SetText(FText::FromString(FString::SanitizeFloat(TotalTime)));
 	DistanceText->SetText(FText::FromString(FString::SanitizeFloat(TotalDistanceRobotsTravelled/100.f)));
+}
+
+void UResultsOverlay::OnSaveButtonClicked()
+{
+	if (ASBSPPlayerController* SBSPPlayerController = Cast<ASBSPPlayerController>(GetOwningPlayer()))
+	{
+		SBSPPlayerController->SaveSimResultsToCSV();
+	}
 }
 
