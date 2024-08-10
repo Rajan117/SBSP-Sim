@@ -1,0 +1,12 @@
+StructureRadius,1
+InitStock,1
+TileRadius,1
+NumRobots,1
+RobotSpeed,1.0
+LaunchFrequency,1.0
+TilePayload,1
+TotalTiles,49
+TotalRobots,7
+TotalLaunches,7
+TotalTime,10.63
+TotalDistanceRobotsTravelled,34.54

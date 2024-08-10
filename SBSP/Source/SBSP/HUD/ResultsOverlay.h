@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ResultsOverlay.generated.h"
 
+class UButton;
 class UTextBlock;
 /**
  * 
@@ -15,6 +16,8 @@ class SBSP_API UResultsOverlay : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	virtual void NativeConstruct() override;
+	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TilesText;
 	UPROPERTY(meta = (BindWidget))
@@ -25,11 +28,17 @@ public:
 	UTextBlock* TimeText;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* DistanceText;
+	UPROPERTY(meta = (BindWidget))
+	UButton* SaveButton;
 
 	void SetResults(int32 NumTiles,
 		int32 NumRobots,
 		int32 NumLaunches,
 		float TotalTime,
 		float TotalDistanceRobotsTravelled);
+
+protected:
+	UFUNCTION()
+	void OnSaveButtonClicked();
 	
 };

@@ -26,6 +26,17 @@ struct FSimSettings
 	int32 TilePayload = 10;
 };
 
+USTRUCT()
+struct FSimResults
+{
+	GENERATED_BODY()
+	int32 TotalTiles = 0;
+	int32 TotalRobots = 0;
+	int32 TotalLaunches = 0;
+	float TotalTime = 0.f;
+	float TotalDistanceRobotsTravelled = 0.f;
+};
+
 UCLASS()
 class SBSP_API ASBSPPlayerController : public APlayerController
 {
@@ -35,6 +46,7 @@ public:
 	ASBSPPlayerController();
 	virtual void BeginPlay() override;
 	void StartSimulation(FSimSettings InSimSettings);
+	void SaveSimResultsToCSV();
 
 protected:
 	void SpawnStructure(FSimSettings InSimSettings);
@@ -55,6 +67,7 @@ private:
 	UPROPERTY()
 	ASpaceStructure* SpaceStructure;
 	FSimSettings SimSettings;
+	FSimResults SimResults;
 	
 public:
 	FORCEINLINE ASpaceStructure* GetSpaceStructure() const { return  SpaceStructure; }
